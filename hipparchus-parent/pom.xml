@@ -541,7 +541,7 @@
     <hipparchus.spotbugs-maven-plugin.version>4.9.2.0</hipparchus.spotbugs-maven-plugin.version>
     <hipparchus.jacoco-maven-plugin.version>0.8.12</hipparchus.jacoco-maven-plugin.version>
     <hipparchus.maven-assembly-plugin.version>3.7.1</hipparchus.maven-assembly-plugin.version>
-    <hipparchus.maven-bundle-plugin.version>5.1.9</hipparchus.maven-bundle-plugin.version>
+    <hipparchus.maven-bundle-plugin.version>6.0.0</hipparchus.maven-bundle-plugin.version>
     <hipparchus.maven-changes-plugin.version>2.12.1</hipparchus.maven-changes-plugin.version>
     <hipparchus.maven-checkstyle-plugin.version>3.6.0</hipparchus.maven-checkstyle-plugin.version>
     <hipparchus.checkstyle.version>10.21.4</hipparchus.checkstyle.version>
@@ -603,12 +603,33 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${hipparchus.maven-compiler-plugin.version}</version>
-          <configuration>
-            <source>${maven.compiler.source}</source>
-            <target>${maven.compiler.target}</target>
-            <compilerArgument>-Xlint:deprecation</compilerArgument>
-            <compilerArgument>-Xlint:unchecked</compilerArgument>
-          </configuration>
+          <executions>
+            <execution>
+              <id>compile-java8</id>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+              <configuration>
+                <source>${maven.compiler.source}</source>
+                <target>${maven.compiler.target}</target>
+                <compilerArgument>-Xlint:deprecation</compilerArgument>
+                <compilerArgument>-Xlint:unchecked</compilerArgument>
+              </configuration>
+            </execution>
+            <execution>
+              <id>compile-java9</id>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+              <configuration>
+                <release>9</release>
+                <compileSourceRoots>
+                  <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+                </compileSourceRoots>
+                <multiReleaseOutput>true</multiReleaseOutput>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -618,6 +639,7 @@
             <archive>
               <manifestFile>${project.build.directory}/osgi/MANIFEST.MF</manifestFile>
               <manifestEntries>
+                <Multi-Release>true</Multi-Release>
                 <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
                 <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
               </manifestEntries>
